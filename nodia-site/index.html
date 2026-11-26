@@ -290,6 +290,14 @@ h2 .g2{color:var(--accent)}
 .pick-tag{font-size:11px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
 .pick-tag.on{color:var(--accent)}
 .pick-foot{margin:14px 0 0;font-size:12px;color:var(--dim);text-align:center}
+
+.ca{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(150,235,8,.35);background:var(--accent-soft);border-radius:999px;padding:5px 12px 5px 5px;cursor:pointer;font:inherit;color:var(--fg);transition:border-color .2s,background .2s,transform .2s}
+.ca:hover{border-color:var(--accent);transform:translateY(-1px)}
+.ca-k{background:var(--accent);color:#0E1600;font-weight:700;font-size:11px;border-radius:999px;padding:3px 8px;letter-spacing:.04em}
+.ca code{font-family:var(--mono);font-size:12px;color:var(--fg)}
+.ca-i{color:var(--accent);flex:none}
+.net i{background:var(--accent)!important;color:#0E1600!important}
+@media (max-width:480px){.ca code{display:none}}
 </style>
 </head>
 <body>
@@ -312,8 +320,7 @@ h2 .g2{color:var(--accent)}
       <a href="#mainnet" data-nav="mainnet">Mainnet</a><a href="#bridge" data-nav="bridge">Bridge</a><a href="#launch" data-nav="launch">Launch</a><a href="#explorer" data-nav="explorer">Explorer</a><a href="#developers" data-nav="developers">Developers</a><a href="#token" data-nav="token">Token</a><a href="#docs" data-nav="docs">Docs</a>
     </div>
     <div class="right">
-      <span class="chip"><span class="dot"></span>Pre-launch</span>
-      <span class="price">NODIA <b id="price">—</b></span>
+      <button class="ca" type="button" id="ca" aria-label="Copy contract address"><span class="ca-k">CA</span><code id="ca-v">Coming soon</code><svg class="ca-i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
       <button class="btn" type="button" id="connect">Connect wallet</button>
     </div>
   </nav>
@@ -368,7 +375,7 @@ h2 .g2{color:var(--accent)}
         <div class="ph"><h3>Deposit</h3><span class="tag" id="bridge-tag">Robinhood → NODIA</span></div>
         <div class="leg">
           <div class="leg-top"><span>From</span><span id="bal">Balance: —</span></div>
-          <div class="leg-main"><input id="amt-from" type="text" inputmode="decimal" placeholder="0.0" aria-label="Amount sent"><span class="net"><img class="ni" src="robinhood-chain.svg" alt="" width="22" height="22" onerror="this.outerHTML='&lt;i&gt;RH&lt;/i&gt;'">Robinhood Chain</span></div>
+          <div class="leg-main"><input id="amt-from" type="text" inputmode="decimal" placeholder="0.0" aria-label="Amount sent"><span class="net"><img class="ni" src="robinhood-chain.svg" alt="" width="22" height="22" onerror="this.remove()">Robinhood Chain</span></div>
         </div>
         <div class="arrow" aria-hidden="true">↓</div>
         <div class="leg">
@@ -674,7 +681,6 @@ var CONFIG = {
   },
   token: "",        // $NODIA token address (ERC-20) on Robinhood Chain
   inbox: "",        // bridge Inbox address (NODIA rollup) on Robinhood Chain
-  priceUsd: null    // price shown at the top, e.g. 0.042; null = "—"
 };
 /* ===================================================================== */
 
@@ -689,7 +695,15 @@ var CONFIG = {
   var account = null, chainId = null, busy = false, doneMsg = null;
 
   // ---------- prix + contrat ----------
-  if (CONFIG.priceUsd != null) $("price").textContent = "$" + CONFIG.priceUsd;
+  (function(){
+    var btn = $("ca"), v = $("ca-v");
+    if (isAddr(CONFIG.token)) { v.textContent = short(CONFIG.token); btn.title = CONFIG.token; }
+    btn.addEventListener("click", function(){
+      if (!isAddr(CONFIG.token)) { UI.toast("The contract address will be published at launch"); return; }
+      UI.copy(CONFIG.token, v);
+      v.textContent = "Copied ✓"; setTimeout(function(){ v.textContent = short(CONFIG.token); }, 1400);
+    });
+  })();
   if (isAddr(CONFIG.inbox)) { $("c3").textContent = CONFIG.inbox; $("c3").classList.remove("muted"); $("c3btn").disabled = false; }
 
   // ---------- RPC NODIA ----------
