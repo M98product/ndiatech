@@ -1,0 +1,930 @@
+<title>NODIA Chain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: monochrome portal. Floating pill nav, centred hero, 4 stat tiles, then bridge, launch and tools sections on one 1040px column. Single dark look by choice. */
+:root{
+  --bg:#191919; --card:#202020; --card-2:#262626; --line:#2F2F2F; --line-2:#3A3A3A;
+  --fg:#F5F5F5; --muted:#A3A3A3; --dim:#737373; --live:#96EB08; --accent:#96EB08; --accent-soft:rgba(150,235,8,.12);
+  --sans:"Geist","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 48px}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:10px}
+
+/* nav */
+.navwrap{max-width:1320px;margin:0 auto}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid var(--line-2);border-radius:999px;padding:12px 14px 12px 22px;background:#1C1C1C}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700;font-size:18px;letter-spacing:-.02em}
+.brand span{font-weight:400;color:var(--muted)}
+.links{display:flex;gap:2px}
+.links a{text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;padding:6px 10px;border-radius:999px}
+.links a:hover{color:var(--fg)}
+.links a.on{background:var(--card-2);color:var(--fg);border:1px solid var(--line-2);box-shadow:inset 0 -2px 0 var(--accent)}
+.right{display:flex;align-items:center;gap:12px;white-space:nowrap}
+.chip{font-size:10px;border:1px solid var(--line-2);border-radius:999px;padding:3px 8px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--live);box-shadow:0 0 0 3px var(--accent-soft)}
+.price{font-size:12px;color:var(--muted)} .price b{color:var(--fg);font-weight:600}
+.btn{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block;transition:border-color .15s,background .15s}
+.btn:hover{border-color:#5A5A5A}
+.btn.light{background:#ECECEC;color:#141414;border-color:#ECECEC}
+.btn.light:hover{background:#fff}
+.btn[aria-disabled="true"]{cursor:not-allowed}
+
+main{max-width:1040px;margin:0 auto}
+
+/* hero */
+.hero{text-align:center;display:flex;flex-direction:column;align-items:center;padding-block:96px 76px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:12px}
+h1{font-weight:600;font-size:clamp(44px,7vw,62px);line-height:1.02;letter-spacing:-.055em;margin:0;text-wrap:balance}
+.lede{color:#C8C8C8;font-size:17px;margin:26px 0 24px}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.ctas .btn{padding:13px 20px;font-size:15px}
+.ul{margin-top:26px;font-size:14px;font-weight:600;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:3px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.stat{border:1px solid var(--line-2);border-radius:14px;padding:24px 22px;background:var(--card);display:flex;flex-direction:column;min-width:0;margin-bottom:8px}
+.stat small{color:#C8C8C8;font-size:13px}
+.stat:first-child b{color:var(--accent)}
+.stat b{font-weight:400;font-size:34px;letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin:14px 0 12px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.stat em{font-style:normal;color:#C8C8C8;font-size:13px}
+
+/* sections */
+section{padding-top:64px}
+.shead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:36px;flex-wrap:wrap}
+h2{font-weight:600;font-size:clamp(30px,4vw,36px);letter-spacing:-.05em;margin:0}
+.shead a{font-size:13px;font-weight:600;text-decoration:none}
+.shead p{margin:6px 0 0;color:var(--muted);font-size:14px}
+.card{border:1px solid var(--line-2);border-radius:14px;background:var(--card);min-width:0}
+
+/* tools */
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tool{padding:24px 22px;display:flex;flex-direction:column;gap:4px;text-decoration:none;transition:border-color .15s}
+.tool:hover{border-color:var(--accent)}
+.tool span{color:var(--accent)}
+.tool h3{margin:0 0 2px;font-weight:500;font-size:22px;letter-spacing:-.04em}
+.tool p{margin:0;color:#C8C8C8;font-size:14px}
+.tool span{margin-top:6px;font-size:12px;font-weight:600}
+
+/* bridge */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.pad{padding:22px}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.ph h3{margin:0;font-weight:500;font-size:20px;letter-spacing:-.03em}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid rgba(150,235,8,.3);background:var(--accent-soft);color:var(--accent)}
+.leg{border:1px solid var(--line);border-radius:12px;background:#1B1B1B;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.leg-top{display:flex;justify-content:space-between;color:var(--dim);font-size:12px}
+.leg-main{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.leg-main input{background:transparent;border:0;font-family:var(--sans);font-size:28px;letter-spacing:-.03em;width:100%;min-width:0;color:var(--fg)}
+.leg-main input::placeholder{color:#555}
+.net{display:flex;align-items:center;gap:8px;border:1px solid var(--line-2);border-radius:999px;padding:5px 12px 5px 5px;white-space:nowrap;font-weight:500;font-size:14px;background:var(--card-2)}
+.net i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:9px;font-weight:700;background:#3A3A3A;color:#DDD}
+.arrow{display:grid;place-items:center;margin:-7px auto;position:relative;z-index:1;width:32px;height:32px;border-radius:10px;border:1px solid var(--line-2);background:var(--card);color:var(--muted);font-size:14px}
+.rows{margin:18px 0;display:flex;flex-direction:column;gap:9px;font-size:13px}
+.rows div{display:flex;justify-content:space-between;color:var(--muted)}
+.rows span:last-child{color:var(--fg);font-family:var(--mono);font-size:12px}
+.wide{width:100%;padding:13px;text-align:center}
+.wide:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ni{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.hint a{color:var(--accent)}
+#connect.on{border-color:rgba(150,235,8,.5);color:var(--accent)}
+.res{text-align:left;padding:22px}.res .kv div{grid-template-columns:140px 1fr}
+.hint{margin:10px 0 0;text-align:center;color:var(--dim);font-size:12px}
+
+/* launch */
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.count div{border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;background:#1B1B1B}
+.count b{display:block;font-weight:400;font-size:28px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.count small{color:var(--dim);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:grid;grid-template-columns:22px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.steps .n{font-family:var(--mono);font-size:12px;color:var(--dim);padding-top:1px}
+.steps strong{display:block;font-size:14px;font-weight:500}
+.steps p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.st{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);padding-top:3px}
+.st.on{color:var(--accent)}
+
+/* tokenomics */
+.tok{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-top:16px}
+.bar{height:10px;border-radius:999px;overflow:hidden;display:flex;gap:2px;margin:6px 0 18px}
+.bar span{display:block;height:100%}
+.legend{display:flex;flex-direction:column;gap:0}
+.legend div{display:flex;align-items:center;gap:10px;font-size:14px;padding:10px 0;border-top:1px solid var(--line);color:#C8C8C8}
+.legend b{margin-left:auto;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+.sw{width:9px;height:9px;border-radius:2px;flex:none}
+.spec{display:flex;flex-direction:column}
+.spec div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.spec div:first-child,.legend div:first-child{border-top:0}
+.spec span:last-child{color:var(--fg);font-family:var(--mono);font-size:13px;text-align:right}
+.lab{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+
+footer{max-width:1040px;margin:72px auto 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--dim);font-size:13px;border-top:1px solid var(--line);padding-top:22px}
+footer .brand{font-size:15px}
+
+@media (max-width:1100px){ .price{display:none} }
+@media (max-width:960px){ .links{display:none} }
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .board,.tools,.tok{grid-template-columns:1fr}
+  .hero{padding-block:64px 56px}
+}
+@media (max-width:480px){
+  .chip{display:none}
+  nav{padding-left:16px}
+  .stat b{font-size:26px}
+  .stats{gap:10px}
+  .stat{padding:18px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* pages */
+.page[hidden]{display:none!important}
+.phero{text-align:center;padding-block:72px 48px;display:flex;flex-direction:column;align-items:center}
+.phero h1{font-size:clamp(38px,6vw,54px)}
+.phero .lede{margin:18px 0 0;max-width:52ch}
+.narrow{max-width:760px;margin:0 auto}
+.kv{display:flex;flex-direction:column}
+.kv div{display:grid;grid-template-columns:160px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--line);align-items:center}
+.kv div:first-child{border-top:0;padding-top:0}
+.kv dt{color:var(--muted);font-size:14px}
+.kv dd{margin:0;font-size:15px;min-width:0;overflow-wrap:anywhere}
+.kv code{font-family:var(--mono);font-size:13px;background:#1B1B1B;border:1px solid var(--line);border-radius:6px;padding:3px 7px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.note2{margin:14px 0 0;color:var(--dim);font-size:12px}
+h3.sec{font-weight:500;font-size:22px;letter-spacing:-.04em;margin:48px 0 4px}
+p.secp{color:var(--muted);margin:0 0 18px;font-size:14px}
+.code{margin-bottom:14px;overflow:hidden}
+.code header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 16px;border-bottom:1px solid var(--line);font-size:13px;font-weight:500}
+.code header button{border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer;color:var(--muted)}
+.code header button:hover{color:var(--fg)}
+.code pre{margin:0;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.65;color:#DCDCDC}
+.search{display:flex;gap:10px;margin-bottom:16px}
+.search input{flex:1;min-width:0;background:var(--card);border:1px solid var(--line-2);border-radius:999px;padding:12px 18px;font:inherit;color:var(--fg)}
+.empty{padding:48px 22px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--fg);font-weight:500;font-size:18px;margin-bottom:6px;letter-spacing:-.02em}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ECECEC;color:#141414;font-weight:600;font-size:13px;padding:9px 16px;border-radius:999px}
+@media (max-width:560px){.kv div{grid-template-columns:1fr;gap:4px}}
+
+.docs{max-width:780px;margin:0 auto;padding-top:64px}
+.docs h1{text-align:left;font-size:clamp(40px,6.5vw,58px);max-width:12ch}
+.docs .lede{margin:20px 0 0;color:#C8C8C8}
+.docs h2{margin:64px 0 16px}
+.docs h2 .acc{color:var(--accent)}
+.box{padding:24px}
+.inner{border:1px solid var(--line-2);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.inner small{display:block;color:var(--muted);font-size:14px}
+.inner span{font-size:15px}
+.ulink{font-size:14px;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:2px;display:inline-block;margin-top:18px}
+.docs p.body{color:#E2E2E2;margin:48px 0 0;font-size:15px;line-height:1.75}
+.docs p.body a{text-decoration:none;border-bottom:1px solid var(--accent)}
+.toc{display:flex;flex-wrap:wrap;gap:6px 18px;border-top:1px solid var(--line);margin-top:40px;padding-top:22px}
+.toc button{background:none;border:0;padding:0;font-size:14px;cursor:pointer;color:var(--fg)}
+.toc button:hover{color:var(--accent)}
+.dsec{scroll-margin-top:24px}
+.dsec h3{font-weight:500;font-size:24px;letter-spacing:-.04em;margin:56px 0 10px}
+.dsec p,.dsec li{color:#C8C8C8;font-size:15px;line-height:1.7}
+.dsec ol{padding-left:20px;margin:0}
+.dsec code{font-family:var(--mono);font-size:13px;background:#1B1B1B;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--fg)}
+
+/* ---- green + motion layer ---- */
+body{background-image:radial-gradient(48rem 26rem at 50% -6rem,rgba(150,235,8,.14),transparent 70%),radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:auto,22px 22px;background-repeat:no-repeat,repeat;background-attachment:scroll}
+h1 .g{color:var(--accent);text-shadow:0 0 40px rgba(150,235,8,.35)}
+.btn.light{background:var(--accent);border-color:var(--accent);color:#0E1600}
+.btn.light:hover{background:#ADF53A;box-shadow:0 0 0 4px var(--accent-soft),0 8px 30px rgba(150,235,8,.25)}
+.btn{transition:border-color .2s,background .2s,box-shadow .25s,transform .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn:not(.light):hover{border-color:var(--accent);color:var(--accent)}
+nav{position:relative}
+.links{position:relative}
+.links a{position:relative;z-index:1;transition:color .2s}
+.links a.on{background:transparent;border:0;box-shadow:none;color:var(--fg)}
+.ind{position:absolute;top:0;left:0;height:100%;border-radius:999px;background:var(--card-2);border:1px solid rgba(150,235,8,.35);box-shadow:inset 0 -2px 0 var(--accent),0 0 18px rgba(150,235,8,.12);transition:transform .45s cubic-bezier(.2,.8,.2,1),width .45s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.brand svg{transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.brand:hover svg{transform:scale(1.08)}
+.dot{position:relative}
+.dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--accent);animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite}
+@keyframes ping{75%,100%{transform:scale(3);opacity:0}}
+.card{transition:border-color .25s,transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.stat:hover,.tool:hover,.tok .card:hover,.code:hover{border-color:rgba(150,235,8,.55);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.35),0 0 0 1px rgba(150,235,8,.15)}
+.stat{transition:border-color .25s,transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.stat em{color:var(--muted)}
+.leg-main .net{border-color:rgba(150,235,8,.3)}
+.arrow{color:var(--accent);border-color:rgba(150,235,8,.35)}
+.count div{border-color:rgba(150,235,8,.18)}
+.count b.tick{animation:tick .45s ease}
+@keyframes tick{0%{color:var(--accent);transform:translateY(-4px)}100%{color:var(--fg);transform:none}}
+.steps .now .n,.st.on~*{color:var(--accent)}
+.code header span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:middle}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.bar span{animation:grow 1s cubic-bezier(.2,.8,.2,1) both;transform-origin:left}
+@keyframes grow{from{transform:scaleX(0)}}
+.legend b{color:var(--fg)}
+/* route progress bar */
+.progress{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--accent);box-shadow:0 0 12px var(--accent);transform-origin:left;transform:scaleX(0);z-index:50;pointer-events:none;opacity:0}
+.progress.run{animation:prog .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes prog{0%{transform:scaleX(0);opacity:1}70%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+/* page enter: content starts visible at rest, animation only plays on route */
+.page.enter .hero > *,.page.enter .phero > *,.page.enter .docs > *,.page.enter .stats > *,.page.enter .tools > *,.page.enter .narrow > *,.page.enter .tok > *,.page.enter section .shead{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+.page.enter :is(.hero,.phero,.docs,.stats,.tools,.narrow,.tok) > :nth-child(2){animation-delay:.06s}
+.page.enter :is(.hero,.phero,.docs,.stats,.tools,.narrow,.tok) > :nth-child(3){animation-delay:.12s}
+.page.enter :is(.hero,.phero,.docs,.stats,.tools,.narrow,.tok) > :nth-child(4){animation-delay:.18s}
+.page.enter :is(.hero,.phero,.docs,.stats,.tools,.narrow,.tok) > :nth-child(5){animation-delay:.24s}
+.page.enter :is(.hero,.phero,.docs,.stats,.tools,.narrow,.tok) > :nth-child(n+6){animation-delay:.3s}
+.page.enter .stats > *{animation-delay:.25s}
+.page.enter .stats > :nth-child(2){animation-delay:.31s}
+.page.enter .stats > :nth-child(3){animation-delay:.37s}
+.page.enter .stats > :nth-child(4){animation-delay:.43s}
+@keyframes rise{from{opacity:0;transform:translateY(16px);filter:blur(4px)}to{opacity:1;transform:none;filter:none}}
+.toast{background:var(--accent);color:#0E1600;animation:rise .3s ease both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.foot{max-width:1040px;margin:96px auto 0;display:flex;flex-direction:column;gap:28px;border-top:1px solid var(--line);padding-top:32px;color:var(--muted);font-size:14px}
+.frow{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot .brand{font-size:16px;font-weight:700;gap:8px}
+.flinks{display:flex;gap:18px;flex-wrap:wrap}
+.flinks a,.fstrong{text-decoration:none;color:#D4D4D4;font-size:15px;transition:color .2s}
+.flinks a:hover,.fstrong:hover{color:var(--accent)}
+.fstrong{font-weight:600}
+.fnote{margin:0;color:var(--dim);font-size:12px}
+
+h2 .g2{color:var(--accent)}
+.copybox{padding:6px 22px}
+.crow{display:grid;grid-template-columns:200px 1fr auto;gap:16px;align-items:center;padding:16px 0;border-top:1px solid var(--line)}
+.crow:first-child{border-top:0}
+.cl small{display:block;color:var(--muted);font-size:12px}
+.cl b{font-weight:500;font-size:15px}
+.crow code{font-family:var(--mono);font-size:14px;background:#141515;border:1px solid var(--line-2);border-radius:10px;padding:10px 14px;min-width:0;overflow-x:auto;white-space:nowrap;color:var(--fg)}
+.crow code.muted{color:var(--dim)}
+.cbtn{border:1px solid rgba(150,235,8,.4);background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s,transform .2s}
+.cbtn:hover:not([disabled]){background:var(--accent);color:#0E1600;transform:translateY(-1px)}
+.cbtn[disabled]{opacity:.4;cursor:not-allowed}
+@media (max-width:640px){.crow{grid-template-columns:1fr auto}.crow .cl{grid-column:1/-1}}
+
+.pick{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px}
+.pick[hidden]{display:none}
+.pick-back{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);animation:fade .2s ease both}
+.pick-box{position:relative;width:min(400px,100%);background:#1C1C1C;border:1px solid var(--line-2);border-radius:20px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:rise .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fade{from{opacity:0}}
+.pick-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pick-head h3{margin:0;font-weight:600;font-size:18px;letter-spacing:-.02em}
+.pick-x{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;padding:6px;border-radius:8px}
+.pick-x:hover{color:var(--fg)}
+.pick-list{display:flex;flex-direction:column;gap:8px}
+.pick-item{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card);cursor:pointer;text-decoration:none;color:var(--fg);font:inherit;text-align:left;transition:border-color .2s,transform .2s}
+.pick-item:hover{border-color:var(--accent);transform:translateY(-1px)}
+.pick-item img{border-radius:10px;flex:none}
+.pick-name{font-weight:500;font-size:15px;flex:1;min-width:0}
+.pick-tag{font-size:11px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.pick-tag.on{color:var(--accent)}
+.pick-foot{margin:14px 0 0;font-size:12px;color:var(--dim);text-align:center}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <clipPath id="nclip"><rect width="100" height="100" rx="24"/></clipPath>
+    <symbol id="mark" viewBox="0 0 100 100">
+      <g clip-path="url(#nclip)"><rect width="100" height="100" fill="#000"/><image href="data:image/png;base64,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SHGlPnNZGX+FkYO6np6Z2blz5ytf+cqmaVpfgWux7WhtsOgEJpdjiwCMQpr24rqJdR9+Y9jz/n3aE0GITTz11FN379p91nPPemJoxuNy+iCIDeKrs2ieTtCiov3P0qKY9+HwoKFKHqPv3LnzwgsvXCu7e5x40WJCuL9pEi2OTYx/6Nfk45fN9vqqElITN23atHv30efu4SLVR05N08zMzOzYseO8885znHltuYu1yyaJDEtXVDVNVJN//At22wf3V5UKqqauTz311O3bt5911ll1Xfd6vcNxgJ+MkStzwZfVAJRxDBAjfMNKAaiyApehS9bEND0zs/3qa376Zy72iCiltS8vWYtkA30EgziixWDr102+79J42wf3h56QUtf1tm3bbrzxxjPPPHMwGIyiGcfEwx+imIeYajf6JAGIat3UGzZs2L1790WvelUd66BhzWV3DaFKoe8JolKt3++//xebWy/f1+tDoCmmrVu33njDjWeeeWbTNCtydwQnPrw4+0iC8vYt0g7sXhGbbIs3wSY2ntc677zzmtgcP9xdGwlWzxIyVYET1dRlr1nY88GFXl/AKjbNli1brr/++uec9Zy6rnv9Csuw+2UeKw/S2AI5QI3L8lneLQSxApbEYaUVQZq1QZGVlZ/DS5eZ4AJp6mZ6evq666676KKL6rpWkeNBM69dbAT01oW3/f3Tr+XYtfWmF//sNIDQQ6gqANu2nfLZz36G5OLioiUe/+QVr1dddZUjayEEkeOraHcNJNiIqid9zLz91Yt7PrQv9AQMKcbNWzbt2nXDWWc9F8T4+PhC8/DSYN8gLsW05GOIfF3JMCVHainoIsSY95J5aR5NklhawOI+8fKuFT2yFYovmafEtsVcB/h3ufzKjGSv17v99tsvvfTSGOPx4DMfJ0gWQrPustfv2/OhfaEPSSGmODW14WM33Hrm8551995PfWXhk/fMfuq+h784O/fooBnEuklJzZgaxBqx9sWe2VmziBS1qWnRlApBMjOT0MP+b4z9/fZ6/qFGQ8nfi6zoij/284cCxfxwxBjznDuz4018cYybd0SExPhU+OYzJr/81/t6fSE01mnLhtOuvP59Tztr/8fvuuyrC7cvhoESqIEYYNJEi7XEaEywJqRoFpmSmIGmNMYBGCWZpQShxESrWM/17/hQ2ve1uNrbvL2oisfrTu5jzeBWUEIQKNjIlk2nveOqn7Nn7fm7L39ivA9FhaQpSYrJktAQo9U1UgKSpSgwteQLes2iWBMskUYaYiOxhvYx93D/bz5cL3wjhYCU8LgcPlIJ5omzYn1tugtFAVGLHFs//st/+mx57s1fvvfzU+NjIQSjEDbiYXnX6BAt9n2QeS6Dd/vn5wCjVjb7jd7nPpQWHoxyrKbJdQxeCU0w9DdUr71i+tQX3jn70P6Jfo+AT7nKVeumHruYKaRdh+KzWU0MNPUBRh4KWWR/HRYeGfvrD8SFR5Kq0roG8LVgsKj4iNHXXLHxjB+enX/QNOhwxZC0u6KkrFUoQxqolmfTAbmkPM8KNMrYOuy/f/y2K5qFh5KG8Lgr6joGryISWE2Fn/2fG77/JfvnHqH21KfMiW9mVAd+FUw+4n04ytWEJgpkqS1LxFKtY+PY//D4X7y3WXggiba1dB2Djy2DPRbVfnjdldNnvWJ+9uup6gXf3um9HS6vVgZw0MSMYurzCoddImX2r+cbqwnuvXv8k39YLz4cRUHr2LoWDBYflqH6c5dPn/3KwfxDjYSA0dDRkLGK3CQmNMVwKav4Xm5j2egnEk0m1uvs1/p/flm9+Ggq87U7OuYMzg0plf7c+6fPvmgw96BVVT+3jghA9UVCpXYiZ+V84JkJCPFdQwYTlHlKkLH18vAXxz72zmbwCEMFs2VT/g/8kYN+lk3mP+hlK729DS6XPf/Yn4hl7zrGoWo4Ntx1EXzNFZteckmae6ipQoCANO9BMo42XcuI0UWufDKhESI+rMONsAi/8Q8TN79tabAvSaUpYpRfB/39MR7q0KE75IvLk7L8mXYlxyF/UCpyD3jjsvofrWSVQuvVBzq8FzTh1e/d9KOvS7P7aiGTZWjCkiRDkxLJGCVFMNEiUrJIMCI1MBNrJCbzAc5MyqQL87ZpS+iHcUlSjYGkpVxNn7NMuQqSiSVnn/KgAJ/ZkzvcLAfRtPwu/4uPDbeU5zi17QxGk+RDnST56FiDmTTJsv8f4TsavJPFfJOZCo2x9kmq0GACxEVNDRM5tiHc++nwpVvmyxSwEweLFoGoWOLF7978Y6+r9+9PvSApUUVNCG9AIoOqGdWn1YnvrBE1UsRb/xjoW0VTgkAWF9PWb66+5zn98XV1GbLORCPFOGKtU84cZFAkef+43/c8dsG9dEvMQ9dMvQvcSDNJyQDxvm5SaGAkE0BJ8DltgnxSmR9SkhlNjPApfJbKBOrh6RFSUrTY2MRU776/1Xs+tbhKbn+1ytyFJV70+1v+7ettdj4GVRbwNg9qAFXERCBUtdzQohBSBUkzfCWeRgBIDGpuflr43mf3CM7Phjye10twC7dcBH3s93ANpNFMrbAQyExy82/JpZlGguKrJUkt49v9irBEtykGWFR6RG60lKM439VOQzSa5WNhMW+IzjAcQUo9sP4Evva5/qfeu5RqWyXMPKyeZq5UUsJ5v73twl/V/YuLIQTvqc+3argdAYRau4qzFKpa2bBbNs+ICJoaW07tffezx1QIg2q7spmj+SJXjxAVLR1PFDCgrEwBhKLtTnfXzsM43e9MVg1SumpECNcxKnk8m4udryVmOyyAIKEQgeSV4BQxoeb9wr77oTepj9617tPvW0pLcfU2uIVV4q5P5n/Fm7e9+s3j++uFoJ5kxcj4Gmm3K5TG2ryarCixsjvU3RNF3WDTlrHvOCMAZknKxs/hts5sa61NBkhbV2P0DCPpywOH67mz3XbzkPdyuGplFsEhmkYQuaXV2AbcYmXsqZuGgsJoxszZrhEnKaRYRH9CHv7S+Kf+aKmZTyqrOEZ6VRjscyh/8o2n/vz/WDc3mNUQpDTTl/2c6tBGAtuponRlCNK07IVrlxpp3cimrf1nfE+PjOX1wwAkb3YkxZSWHabcGJbaraCWrTXENzGQiqTw/TgWEt1SBn8xqLSQrS8VBjNjUrES3mU0tCxYsXZdgNIE9Dm5y+rzCGWSsSl55O6x2y5r6rkklaze4sJVYbBz9+VvOO0Xf2/9XD0nGkTznqlSiYHSTIt2+RGHwVJeTUUTEQUJhthw5pTwLd/RI2qYz5nKdW9m7RYjFHkm6RrDjSKKZAkpBkh2tUZLRPJ8o9ZlY/acxd1gUnyOlzts9KNAGAV5/Yp/isKUeV2L+fRUn83ikp0a9NfJ3n8e23PZYDCbRGW1MyJhNbh77qWn/6c/PGWhmaOKqOssD2TLXJp8X5E7B2Q4+qSMtGv7/hkjprdU3/StwRh9k042bFnXZzvYGj9mReqjTZetxsnnaRgXIUPc5S/lUpnTZiaQ9rIybFeTsp5DmJezlPORMDwlnhpB9jZSRDWO/V8dv/Vd9dKjvtdu1dHycFS5qynynEtO+9XLT19Ks1ColHm+pJuqIseuRrN3kkW6cM28xR+EIEaZ3hpO/5ZAM5jmYvniUbduqh8UGzbrsqyecz+tOGMmKJGSC3fxr1nudVa8lr+slHBKWxObvb9MYgaxNp6WkaEM2p4MAGaopjD39XW3/n69+MixQ1WPWl106EmKdvZFp7/x/d9GWxSGgvQMETqvXVIREW2HEIlkV7es+4RPaFGVlLhhunfaN1dmye13GffOvHIsy83IH2wHlg2JK24ILDq+Ba2Kci6j6DjC/mwO8jEYPmeOfpA8oEIPwxMDpIahz4UHx/7isnrh4ejTN49NOU04atxt+IOvOPXNf/KdwEKid4TCgQfCPGNPeOA56nb4y9wL1aHrJEgpbdjY2/ZNfbJwN8OKfucNOewwz1MYCdG2tNmdWGSTINkcWIuEZCYh55gF0OLYS64bcStrZaK80UxRNgs4apEXsicp5lbaHWk0j6ACE8IY5x+Y+OQ74tx9sdjdY7RtIBwtu/v8Hzv9rX92BsJspGkAYT6ZkrAyrJOjSXgZmd6Ql6gAoBgpgpQwtaHavLUHJrN2QTRHdSNHrKMXufp00RHri+IDC9vvkXEGZ/swjiomnMVsy4ir1TrBQ7Q8u9YOipVxwOW9+XCIKE11gouPTHzy99Lc/c2xsbtHE8kKlaZoP3DuqW+56vtlbC41QStr9RsgKj7lQjlc+kr/Lw95a/Wz0CdmmaWpDb3pmTGyybMsfZnOCINBhXHEyOXItRjpYSajnTdoZehkgUUs75hsNfrI6cGI+eTwQ/NCQ1oR0xFnr3wZouxUtITQt6X9Y7deFvff32gQGI/xUvrw5GX32edse/t1L+xPzTcxaii1U9mzSkMj6B6IYxuS1aC0Oz5hDkCZycS6/sbpABoNkgehgD67ss0D0J0bEQ5DHVBddrPhzyJIH4OoWYt63tGMIINHukDBKQ1ZtxcZzYY2VciaoK0iEoLwxENec1pWj1JEhAna59Kj47e+Pe29p3bNfOxLTMKT5O53v2DL7+58/sTGpTpSQi6Xci0IaYeGmfPI78Ayxwc56hFARI2YWBemNigZR7zMHL1YAUnaaHk4QRR5AvPQx/Eyy/weKcNzhENFOszVjkTSOU3pB7JVtgXkYjkKeZptCZBKvFT0Fg1hnPXs+Cd+3/beUx97zfxkGewR0TOfv/WdN/yrdZvn6xg1FIuL5POARwb7OcDgFbHt3m56QOT3R6gk++PV5GRFSw4OEwKqb30d9gNlvlZ+AV/fm12hXPiR+W+mBrG8FYAGz+fkMNdQcRgdtZZbs+9Vds564mE498phDYIGScOSd7+yGY2SDDqOZmndJ9+RHv1/dVjTOpMnwuAqaEr2Xc/ZctkNP7xha900FoJkrDfPmiG9r88ZKQkcHVTS4sc+sTKLdq+PiQktxq5gxdkBFkMBDUwMZbqHxylD1zcPUsnIhpRNn8Uy0DIylWeoFPfYi28tg9RlPDnLyuiUMyCkmEl2gctQHT+FrU5iElRs9o7f+k57+K5ag+Tc84nC4CpoTPb0M6bffdPLNp+KxWYphJDhBrHsyIgVl4qkQWw4Rs5do9bXyVPFWPW1P9Yuc/Z7rGU2oAuNaFtOm8MvT/uJWc7vtobQjW7KgDOIRAOGgVO7Qa113GAW0KamUNKFBmRN3maR87FgngHtvrTSXKqD9sm58U++Iz30pVoC1nyFxJExuKo0Jjv9Ozf8wU3nbPsWm28We8HdYxMfJKoZ2m+xfwiJZCI5o5MnU7bxMQBqJVXPuasOPzl0YBnkbC2lJ2fBFoho77sJAVOU3K0M7TRJa4fbCksKj6YYFW9KG6q1cTDa5ZdS8kW5lmgk1egpXt8vPkZL6/a8Kz3wj41WirT2dbtHwOAQNCXb9vT1f3TzTzztOzC3tFRVmr2mNjhBMpJM5d7QYWFPr0lmT9bSJnk+c1XlVXTGknpgARRJKRnyYozdT894cgEOlblExvGtYQRcfGnXxu7I+7L2kSVLKEI5ClOXTJ8zGiNKYohSmHhbDanSQ5wdu/X37Oufd7t7XKxsOtw4WAWW7LRv3fCej/z4M79rcpaLk+PB4GvQ3UaZAYqxgEgo0QMiESMiERKSQc23iAKGAFJQqTBkpDavQMifxpKF92DIk3EUYTHJBjOqR8O+Td3LLRQCVRduI0zEVAAzyYrblEoNBGFJaAYTzW62mNGiL/MRCUkIJmjy06pQUYfUUxKDMrQj//tjqBcnbn1neuDOgajX+hwXdFgMFgEhk9P9N132spnNY3d9ZW+/1080gzl8ZELQREAopWcSzKK7qAZS+qZC6REEm2iNpWQaJKj6tJ1UJxgIBB8gbYm5BTu7yqDljQktdu+JXikPadHygDQVL79yC+p4txmZvKfNM4NCY4xWwnGXfpgxxRYu7ZGkz/QyTx3SHJFOvqhJU20p+SLU6rYPxAfuHGgQS8dRR8UR+Hf98bB+ZmJpMQbNOBBzVQqyYRVxKfM8jbnkuciFAjcmHyAsWlFCVoC04aB/iFDMm7vznjS316psd5pw2dcviCM9i5ETecQBqxOYT2qZVjgc0O5JjpEMBUcnMvkCp6z1rU3cCyCwlEdBWcNmySofSNu1zJyUJHpgufMJJsFFVx/521YiHsaXIIalhnLYl21r2A/1iavSmNYJbUcdddRRRx111FFHHXXUUUcdddRRRx111FFHHXXUUUcdddRRRx111FFHHXXUUUcdddRRRx111FFHHXXUUUcdddRRRycM/X/Zb2XGPR7xQwAAAABJRU5ErkJggg==" width="100" height="100"/></g>
+      <rect x="1" y="1" width="98" height="98" rx="23" fill="none" stroke="#2A2A2A" stroke-width="2"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="navwrap">
+  <nav aria-label="Main">
+    <a class="brand" href="#mainnet"><svg width="30" height="30"><use href="#mark"/></svg>NODIA <span>Chain</span></a>
+    <div class="links"><span class="ind" aria-hidden="true"></span>
+      <a href="#mainnet" data-nav="mainnet">Mainnet</a><a href="#bridge" data-nav="bridge">Bridge</a><a href="#launch" data-nav="launch">Launch</a><a href="#explorer" data-nav="explorer">Explorer</a><a href="#developers" data-nav="developers">Developers</a><a href="#token" data-nav="token">Token</a><a href="#docs" data-nav="docs">Docs</a>
+    </div>
+    <div class="right">
+      <span class="chip"><span class="dot"></span>Pre-launch</span>
+      <span class="price">NODIA <b id="price">—</b></span>
+      <button class="btn" type="button" id="connect">Connect wallet</button>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- MAINNET -->
+  <div class="page" data-page="mainnet">
+    <header class="hero">
+      <div class="eyebrow"><span class="dot"></span>Mainnet coming soon</div>
+      <h1>NODIA <span class="g">portal.</span></h1>
+      <p class="lede">Bridge $NODIA to NODIA Chain and follow your transactions.</p>
+      <div class="ctas">
+        <button class="btn light" type="button" data-add-network>Add network to wallet</button>
+        <a class="btn" href="#bridge">Open bridge</a>
+      </div>
+      <a class="ul" href="#developers">Read the developer quickstart</a>
+    </header>
+    <div class="stats" aria-label="Network parameters">
+      <div class="stat"><small>Latest NODIA block</small><b id="blk">0</b><em>Genesis at launch</em></div>
+      <div class="stat"><small>Block time</small><b><span data-count="250">250</span> ms</b><em>Sequencer</em></div>
+      <div class="stat"><small>Chain ID</small><b>—</b><em>EVM compatible</em></div>
+      <div class="stat"><small>Native currency</small><b><svg width="30" height="30"><use href="#mark"/></svg>NODIA</b><em>18 decimals</em></div>
+    </div>
+    <section>
+      <div class="shead"><div><h2>Bridge from <span class="g2">Robinhood Chain</span></h2><p>Copy these details to add both networks to your wallet.</p></div><a href="#bridge">Open bridge</a></div>
+      <div class="card copybox">
+        <div class="crow"><div class="cl"><small>Source network</small><b>Robinhood Chain</b></div><code id="c1">4663</code><button type="button" class="cbtn" data-copy-id="c1">Copy</button></div>
+        <div class="crow"><div class="cl"><small>Destination network</small><b>NODIA Chain</b></div><code id="c2">https://rpc.nodia.network/</code><button type="button" class="cbtn" data-copy-id="c2">Copy</button></div>
+        <div class="crow"><div class="cl"><small>Bridge contract</small><b>$NODIA</b></div><code class="muted" id="c3">Published at launch</code><button type="button" class="cbtn" id="c3btn" data-copy-id="c3" disabled>Copy</button></div>
+      </div>
+    </section>
+    <section>
+      <div class="shead"><h2>Network tools</h2><a href="#docs">Documentation</a></div>
+      <div class="tools">
+        <a class="card tool" href="#bridge"><h3>Bridge</h3><p>Move $NODIA between Robinhood Chain and NODIA Chain.</p><span>Open Bridge</span></a>
+        <a class="card tool" href="#explorer"><h3>Explorer</h3><p>Look up blocks, receipts and accounts.</p><span>Open Explorer</span></a>
+        <a class="card tool" href="#developers"><h3>Developers</h3><p>Connect your application to the mainnet RPC.</p><span>Open Developers</span></a>
+      </div>
+    </section>
+  </div>
+
+  <!-- BRIDGE -->
+  <div class="page" data-page="bridge" hidden>
+    <header class="phero">
+      <div class="eyebrow"><span class="dot"></span>Bridge</div>
+      <h1>NODIA <span class="g">bridge.</span></h1>
+      <p class="lede">Deposit $NODIA from Robinhood Chain to NODIA Chain. The bridge opens on launch day.</p>
+    </header>
+    <div class="narrow" style="max-width:480px">
+      <div class="card pad" aria-label="Bridge">
+        <div class="ph"><h3>Deposit</h3><span class="tag" id="bridge-tag">Robinhood → NODIA</span></div>
+        <div class="leg">
+          <div class="leg-top"><span>From</span><span id="bal">Balance: —</span></div>
+          <div class="leg-main"><input id="amt-from" type="text" inputmode="decimal" placeholder="0.0" aria-label="Amount sent"><span class="net"><img class="ni" src="robinhood-chain.svg" alt="" width="22" height="22" onerror="this.outerHTML='&lt;i&gt;RH&lt;/i&gt;'">Robinhood Chain</span></div>
+        </div>
+        <div class="arrow" aria-hidden="true">↓</div>
+        <div class="leg">
+          <div class="leg-top"><span>To</span><span>You receive</span></div>
+          <div class="leg-main"><input id="amt-to" type="text" placeholder="0.0" readonly aria-label="Amount received"><span class="net"><svg width="22" height="22"><use href="#mark"/></svg>NODIA</span></div>
+        </div>
+        <div class="rows">
+          <div><span>Estimated time</span><span>~2 min</span></div>
+          <div><span>Bridge fee</span><span>0.05%</span></div>
+          <div><span>Asset</span><span>$NODIA</span></div>
+        </div>
+        <button class="btn light wide" type="button" id="bridge-btn">Connect wallet</button>
+        <p class="hint" id="bridge-hint">Connect your wallet to bridge.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAUNCH -->
+  <div class="page" data-page="launch" hidden>
+    <header class="phero">
+      <div class="eyebrow"><span class="dot"></span>Launch</div>
+      <h1>$NODIA <span class="g">launch.</span></h1>
+      <p class="lede">The coin launches on a launchpad first, then becomes the native currency of NODIA Chain.</p>
+    </header>
+    <div class="narrow">
+      <div class="card pad">
+        <div class="ph"><h3>Launch steps</h3><span class="tag">Roadmap</span></div>
+        <ol class="steps">
+          <li><span class="n">01</span><div><strong>Testnet</strong><p>Blocks, bridge and explorer tested.</p></div><span class="st">Done</span></li>
+          <li><span class="n">02</span><div><strong>Launchpad launch</strong><p>$NODIA is created, open to everyone.</p></div><span class="st on">In progress</span></li>
+          <li><span class="n">03</span><div><strong>Liquidity pool</strong><p>Migration to a DEX, LP tokens locked.</p></div><span class="st">Upcoming</span></li>
+          <li><span class="n">04</span><div><strong>Bridge opens</strong><p>$NODIA becomes the network's native currency.</p></div><span class="st">Upcoming</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLORER -->
+  <div class="page" data-page="explorer" hidden>
+    <header class="phero">
+      <div class="eyebrow"><span class="dot"></span>Explorer</div>
+      <h1>NODIA <span class="g">explorer.</span></h1>
+      <p class="lede">Look up a block, a transaction or an address.</p>
+    </header>
+    <div class="narrow">
+      <form class="search" id="search-form">
+        <input id="search" type="text" placeholder="Block, transaction hash or 0x address" aria-label="Search">
+        <button class="btn light" type="submit">Search</button>
+      </form>
+      <div class="card empty" id="search-out">
+        <strong>Search NODIA Chain</strong>
+        Block number, transaction hash (0x…, 66 characters) or address (0x…, 42 characters).
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVELOPERS -->
+  <div class="page" data-page="developers" hidden>
+    <header class="phero">
+      <div class="eyebrow"><span class="dot"></span>Developers</div>
+      <h1>Network <span class="g">settings.</span></h1>
+      <p class="lede">Transactions on NODIA Chain use native NODIA for gas. Its parent network is Robinhood Chain, ID 4663.</p>
+    </header>
+    <div class="narrow">
+      <div class="card pad">
+        <dl class="kv" style="margin:0">
+          <div><dt>Network</dt><dd>NODIA Chain Mainnet</dd></div>
+          <div><dt>Chain ID</dt><dd>Assigned at launch</dd></div>
+          <div><dt>Gas currency</dt><dd>NODIA · 18 decimals</dd></div>
+          <div><dt>HTTPS RPC</dt><dd><code id="rpc">https://rpc.nodia.network/</code></dd></div>
+          <div><dt>Explorer</dt><dd><code>https://explorer.nodia.network/</code></dd></div>
+        </dl>
+        <div class="actions">
+          <button class="btn light" type="button" data-copy="https://rpc.nodia.network/">Copy RPC</button>
+          <button class="btn" type="button" data-add-network>Add to wallet</button>
+        </div>
+        <p class="note2" id="rpc-status">Checking RPC…</p>
+      </div>
+
+      <h3 class="sec">Read the chain</h3>
+      <p class="secp">Use the RPC directly from a terminal or client application.</p>
+
+      <div class="card code">
+        <header><span>Foundry</span><button type="button" data-copy-pre>Copy</button></header>
+        <pre>cast block-number --rpc-url https://rpc.nodia.network/</pre>
+      </div>
+      <div class="card code">
+        <header><span>JSON-RPC</span><button type="button" data-copy-pre>Copy</button></header>
+        <pre>curl https://rpc.nodia.network/ -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}'</pre>
+      </div>
+      <div class="card code">
+        <header><span>viem</span><button type="button" data-copy-pre>Copy</button></header>
+        <pre>import { createPublicClient, http } from 'viem'
+const client = createPublicClient({
+  transport: http('https://rpc.nodia.network/')
+})
+console.log(await client.getBlockNumber())</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOKEN -->
+  <div class="page" data-page="token" hidden>
+    <header class="phero">
+      <div class="eyebrow"><span class="dot"></span>Token</div>
+      <h1>$NODIA <span class="g">token.</span></h1>
+      <p class="lede">Planned allocation and coin parameters.</p>
+    </header>
+    <div class="tok">
+      <div class="card pad">
+        <p class="lab">Allocation</p>
+        <div class="bar" aria-hidden="true">
+          <span style="width:70%;background:var(--accent)"></span><span style="width:15%;background:#A3A3A3"></span><span style="width:10%;background:#6B6B6B"></span><span style="width:5%;background:#444"></span>
+        </div>
+        <div class="legend">
+          <div><span class="sw" style="background:var(--accent)"></span>Public launchpad<b>70%</b></div>
+          <div><span class="sw" style="background:#A3A3A3"></span>Liquidity<b>15%</b></div>
+          <div><span class="sw" style="background:#6B6B6B"></span>Ecosystem<b>10%</b></div>
+          <div><span class="sw" style="background:#444"></span>Team, 12-month vesting<b>5%</b></div>
+        </div>
+      </div>
+      <div class="card pad">
+        <p class="lab">Parameters</p>
+        <div class="spec">
+          <div><span>Name</span><span>NODIA</span></div>
+          <div><span>Ticker</span><span>$NODIA</span></div>
+          <div><span>Decimals</span><span>18</span></div>
+          <div><span>Launch network</span><span>To be announced</span></div>
+          <div><span>Contract address</span><span>Published at launch</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCS -->
+  <div class="page" data-page="docs" hidden>
+    <div class="docs">
+      <h1>NODIA mainnet <span class="g">documentation</span></h1>
+      <p class="lede">Connect an EVM wallet, read the network or build an application on NODIA Chain.</p>
+
+      <h2>NODIA Chain <span class="acc">Mainnet.</span></h2>
+      <div class="card box">
+        <div class="inner">
+          <div><small>Chain ID</small><span>Assigned at launch</span></div>
+          <div><small>Gas currency</small><span>NODIA</span></div>
+          <div><small>Settles on</small><span>Robinhood Chain · 4663</span></div>
+        </div>
+        <a class="ulink" href="#mainnet">View network status ↗</a>
+      </div>
+
+      <p class="body">Start with the <a href="#developers">developer quickstart</a>. For the coin schedule and the launchpad release, open the <a href="#launch">Launch</a> page.</p>
+
+      <div class="toc" aria-label="Contents">
+        <button type="button" data-goto="doc-connect">Connect to mainnet</button>
+        <button type="button" data-goto="doc-rpc">JSON-RPC</button>
+        <button type="button" data-goto="doc-bridge">Bridge NODIA</button>
+        <button type="button" data-goto="doc-settings">Network settings</button>
+        <button type="button" data-goto="doc-gas">Gas and settlement</button>
+      </div>
+
+      <div class="dsec" id="doc-connect">
+        <h3>Connect to mainnet</h3>
+        <ol>
+          <li>Open your EVM wallet (MetaMask, Rabby…) and choose “Add network”.</li>
+          <li>Network name: <code>NODIA Chain Mainnet</code></li>
+          <li>RPC: <code>https://rpc.nodia.network/</code></li>
+          <li>Symbol: <code>NODIA</code>. Explorer: <code>https://explorer.nodia.network/</code></li>
+          <li>The Chain ID will be published here on launch day.</li>
+        </ol>
+      </div>
+      <div class="dsec" id="doc-rpc">
+        <h3>JSON-RPC</h3>
+        <p>The RPC follows the standard Ethereum API: <code>eth_chainId</code>, <code>eth_blockNumber</code>, <code>eth_getBalance</code>, <code>eth_sendRawTransaction</code> and the other <code>eth_*</code> methods. Ready-to-copy examples are on the <a class="ulink" style="margin:0" href="#developers">Developers</a> page.</p>
+      </div>
+      <div class="dsec" id="doc-bridge">
+        <h3>Bridge NODIA</h3>
+        <p>The bridge moves $NODIA from Robinhood Chain to NODIA Chain. A deposit arrives in about 2 minutes, with a 0.05% fee. The bridge opens on launch day.</p>
+      </div>
+      <div class="dsec" id="doc-settings">
+        <h3>Network settings</h3>
+        <p>Target block time: 250 ms. Native currency: NODIA, 18 decimals. EVM compatible: Solidity contracts deploy without changes.</p>
+      </div>
+      <div class="dsec" id="doc-gas">
+        <h3>Gas and settlement</h3>
+        <p>Every transaction pays gas in NODIA. Transaction batches are posted and settled on Robinhood Chain, the parent network.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="frow">
+    <a class="brand" href="#mainnet"><svg width="40" height="40"><use href="#mark"/></svg>NODIA Chain</a>
+    <div class="flinks"><a href="#docs">Docs</a><a href="#bridge">Bridge</a><a href="#explorer">Explorer</a><a href="#developers">Developers</a></div>
+  </div>
+  <div class="frow">
+    <span>NODIA Chain Mainnet · Chain ID at launch</span>
+    <a class="fstrong" href="#launch">Launch</a>
+  </div>
+  <p class="fnote">Independent project, not affiliated with any other brand.</p>
+</footer>
+
+<script>
+(function(){
+  // routing
+  var pages = document.querySelectorAll("[data-page]");
+  var navs = document.querySelectorAll("[data-nav]");
+  var names = Array.prototype.map.call(pages, function(p){return p.dataset.page});
+  var ind = document.querySelector(".ind");
+  var bar = document.querySelector(".progress");
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function moveInd(){
+    var a = document.querySelector(".links a.on");
+    if (!ind) return;
+    if (!a || !a.offsetParent){ ind.style.width = "0px"; return; }
+    ind.style.width = a.offsetWidth + "px";
+    ind.style.transform = "translateX(" + a.offsetLeft + "px)";
+  }
+  function countUp(root){
+    if (reduce) return;
+    root.querySelectorAll("[data-count]").forEach(function(el){
+      var end = +el.dataset.count, t0 = performance.now();
+      (function step(t){ var k = Math.min(1,(t-t0)/900); el.textContent = Math.round(end*(1-Math.pow(1-k,3))); if (k<1) requestAnimationFrame(step); })(t0);
+    });
+  }
+  var first = true;
+  function route(){
+    var h = location.hash.replace("#","");
+    if (names.indexOf(h) < 0) h = "mainnet";
+    pages.forEach(function(p){
+      var show = p.dataset.page === h;
+      p.hidden = !show;
+      p.classList.remove("enter");
+      if (show){ void p.offsetWidth; p.classList.add("enter"); countUp(p); }
+    });
+    navs.forEach(function(a){ a.classList.toggle("on", a.dataset.nav === h); });
+    moveInd();
+    if (!first && bar){ bar.classList.remove("run"); void bar.offsetWidth; bar.classList.add("run"); }
+    if (!first) window.scrollTo({top:0, behavior: reduce ? "auto" : "smooth"});
+    first = false;
+  }
+  window.addEventListener("hashchange", route); route();
+  window.addEventListener("resize", moveInd);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(moveInd);
+
+
+
+  // copy
+  var toastEl;
+  function toast(msg){
+    if (!toastEl){ toastEl = document.createElement("div"); toastEl.className="toast"; toastEl.setAttribute("role","status"); document.body.appendChild(toastEl); }
+    toastEl.textContent = msg; toastEl.hidden = false;
+    clearTimeout(toastEl._t); toastEl._t = setTimeout(function(){ toastEl.hidden = true; }, 1600);
+  }
+  function selectText(el){ var r=document.createRange(); r.selectNodeContents(el); var s=getSelection(); s.removeAllRanges(); s.addRange(r); }
+  function copy(text, el){
+    try {
+      navigator.clipboard.writeText(text).then(function(){ toast("Copied"); }, function(){ selectText(el); toast("Selected, press Ctrl+C"); });
+    } catch(e){ selectText(el); toast("Selected, press Ctrl+C"); }
+  }
+  document.querySelectorAll("[data-copy]").forEach(function(b){
+    b.addEventListener("click", function(){ copy(b.dataset.copy, document.getElementById("rpc")); });
+  });
+  document.querySelectorAll("[data-copy-pre]").forEach(function(b){
+    b.addEventListener("click", function(){ var pre=b.closest(".code").querySelector("pre"); copy(pre.textContent, pre); });
+  });
+
+  document.querySelectorAll("[data-copy-id]").forEach(function(b){
+    b.addEventListener("click", function(){ var el=document.getElementById(b.dataset.copyId); copy(el.textContent, el); var t=b.textContent; b.textContent="Copied ✓"; setTimeout(function(){ b.textContent=t; },1400); });
+  });
+
+  window.NODIA_UI = { toast: toast, copy: copy };
+
+  // docs table of contents
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){ document.getElementById(b.dataset.goto).scrollIntoView({behavior:"smooth"}); });
+  });
+
+
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURATION — fill in these values on launch day.
+   While a value is empty, the related feature shows a clear message.
+   ===================================================================== */
+var CONFIG = {
+  nodia: {
+    chainId: 0,                                  // e.g. 123456 (NODIA Chain ID)
+    name: "NODIA Chain Mainnet",
+    rpc: "https://rpc.nodia.network/",
+    explorer: "https://explorer.nodia.network/",
+    symbol: "NODIA", decimals: 18
+  },
+  parent: {
+    chainId: 4663,                               // Robinhood Chain (check their official docs)
+    name: "Robinhood Chain",
+    rpc: "",                                     // Robinhood Chain public RPC
+    explorer: "",                                // Robinhood Chain explorer
+    symbol: "ETH", decimals: 18
+  },
+  token: "",        // $NODIA token address (ERC-20) on Robinhood Chain
+  inbox: "",        // bridge Inbox address (NODIA rollup) on Robinhood Chain
+  priceUsd: null    // price shown at the top, e.g. 0.042; null = "—"
+};
+/* ===================================================================== */
+
+(function(){
+  var UI = window.NODIA_UI, $ = function(id){ return document.getElementById(id); };
+  var E = window.ethers;
+  var hex = function(n){ return "0x" + Number(n).toString(16); };
+  var short = function(a){ return a.slice(0,6) + "…" + a.slice(-4); };
+  var isAddr = function(a){ return /^0x[0-9a-fA-F]{40}$/.test(a || ""); };
+  var ERC20 = ["function balanceOf(address) view returns (uint256)","function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)"];
+  var INBOX = ["function depositERC20(uint256 amount) returns (uint256)"];
+  var account = null, chainId = null, busy = false, doneMsg = null;
+
+  // ---------- prix + contrat ----------
+  if (CONFIG.priceUsd != null) $("price").textContent = "$" + CONFIG.priceUsd;
+  if (isAddr(CONFIG.inbox)) { $("c3").textContent = CONFIG.inbox; $("c3").classList.remove("muted"); $("c3btn").disabled = false; }
+
+  // ---------- RPC NODIA ----------
+  function rpc(method, params){
+    return fetch(CONFIG.nodia.rpc, { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ jsonrpc:"2.0", id:1, method:method, params:params || [] }) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (j.error) throw new Error(j.error.message); return j.result; });
+  }
+  var rpcUp = false;
+  function pollBlock(){
+    rpc("eth_blockNumber").then(function(h){
+      rpcUp = true;
+      $("blk").textContent = parseInt(h,16).toLocaleString("en-US");
+      $("rpc-status").textContent = "RPC online · block " + parseInt(h,16).toLocaleString("en-US");
+    }).catch(function(){
+      rpcUp = false;
+      $("rpc-status").textContent = "The RPC is not responding yet. It goes live at mainnet launch.";
+    });
+  }
+  pollBlock(); setInterval(pollBlock, 5000);
+
+  // ---------- wallet ----------
+  // ---------- wallets (Phantom by default, plus any EIP-6963 wallet) ----------
+  var chosen = null, hooked = [], discovered = [];
+  var PHANTOM_ICON = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#AB9FF2"/><path d="M11 25.5c0-7 5.2-12 11.2-12 4.6 0 8 3.6 7.8 8.4-.2 3.9-2.4 6.6-4.2 6.6-1 0-1.4-.7-1.4-1.6 0 1-1 1.6-2 1.6-1.2 0-1.8-.8-1.8-1.6 0 .9-.9 1.6-2 1.6-1.6 0-2.6-1.2-2.6-2.6 0 .3-.6.6-1.3.6-1.7 0-3.7-.4-3.7-1.4z" fill="#fff"/><circle cx="21" cy="20" r="1.4" fill="#AB9FF2"/><circle cx="25.5" cy="20" r="1.4" fill="#AB9FF2"/></svg>');
+  function phantom(){ return (window.phantom && window.phantom.ethereum) || null; }
+  function wallet(){ return chosen || null; }
+  window.addEventListener("eip6963:announceProvider", function(e){
+    var d = e.detail; if (!d || !d.info || !d.provider) return;
+    if (!discovered.some(function(x){ return x.info.uuid === d.info.uuid; })) discovered.push(d);
+    if (pick && !pick.hidden) renderPicker();
+  });
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+  function remember(id){ try { localStorage.setItem("nodia-wallet", id || ""); } catch(e){} }
+  function recall(){ try { return localStorage.getItem("nodia-wallet") || ""; } catch(e){ return ""; } }
+  function providerFor(id){
+    if (id === "phantom") return phantom();
+    var d = discovered.find(function(x){ return x.info.rdns === id; });
+    if (d) return d.provider;
+    if (id === "injected") return window.ethereum || null;
+    return null;
+  }
+  function hook(pv){
+    if (hooked.indexOf(pv) >= 0 || !pv.on) return;
+    hooked.push(pv);
+    pv.on("accountsChanged", function(a){ if (pv === chosen) setAccount(a[0]); });
+    pv.on("chainChanged", function(c){ if (pv === chosen) { chainId = parseInt(c,16); refreshBridge(); } });
+  }
+  function needWallet(){
+    if (!wallet()) { openPicker(); return false; }
+    return true;
+  }
+  function setAccount(a){
+    account = a || null;
+    var b = $("connect");
+    b.textContent = account ? short(account) : "Connect wallet";
+    b.classList.toggle("on", !!account);
+    refreshBridge();
+  }
+  function connectWith(id){
+    var pv = providerFor(id);
+    if (!pv) return Promise.reject(new Error("missing"));
+    chosen = pv; hook(pv);
+    return pv.request({ method:"eth_requestAccounts" }).then(function(acc){
+      remember(id); closePicker();
+      setAccount(acc[0]);
+      return pv.request({ method:"eth_chainId" });
+    }).then(function(c){ chainId = parseInt(c,16); refreshBridge(); UI.toast("Wallet connected"); })
+      .catch(function(e){ if (e && e.code === 4001) UI.toast("Connection rejected in wallet"); throw e; });
+  }
+  function disconnect(){ chosen = null; remember(""); setAccount(null); chainId = null; closePicker(); UI.toast("Wallet disconnected"); }
+
+  // picker UI
+  var pick = document.createElement("div");
+  pick.className = "pick"; pick.hidden = true;
+  pick.innerHTML = '<div class="pick-back" data-close></div><div class="pick-box" role="dialog" aria-modal="true" aria-labelledby="pick-title"><div class="pick-head"><h3 id="pick-title">Connect a wallet</h3><button type="button" class="pick-x" data-close aria-label="Close">✕</button></div><div class="pick-list" id="pick-list"></div><p class="pick-foot">By connecting, you only share your public address.</p></div>';
+  document.body.appendChild(pick);
+  pick.addEventListener("click", function(e){ if (e.target.closest("[data-close]")) closePicker(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !pick.hidden) closePicker(); });
+  function item(opts){
+    var el = document.createElement(opts.href ? "a" : "button");
+    el.className = "pick-item";
+    if (opts.href){ el.href = opts.href; el.target = "_blank"; el.rel = "noopener"; } else { el.type = "button"; }
+    var img = document.createElement("img"); img.src = opts.icon; img.alt = ""; img.width = 36; img.height = 36;
+    var name = document.createElement("span"); name.className = "pick-name"; name.textContent = opts.name;
+    var tag = document.createElement("span"); tag.className = "pick-tag" + (opts.strong ? " on" : ""); tag.textContent = opts.tag || "";
+    el.appendChild(img); el.appendChild(name); el.appendChild(tag);
+    if (opts.onClick) el.addEventListener("click", opts.onClick);
+    return el;
+  }
+  var GENERIC_ICON = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="10" fill="#2A2A2A"/><rect x="9" y="13" width="22" height="15" rx="3" fill="none" stroke="#ddd" stroke-width="2"/><circle cx="26" cy="20.5" r="1.6" fill="#ddd"/></svg>');
+  function renderPicker(){
+    var list = $("pick-list"); list.innerHTML = "";
+    var current = recall();
+    if (account){
+      list.appendChild(item({ icon: GENERIC_ICON, name: short(account), tag: "Copy address", onClick: function(){ UI.copy(account, $("connect")); } }));
+      list.appendChild(item({ icon: GENERIC_ICON, name: "Disconnect", tag: "", onClick: disconnect }));
+      return;
+    }
+    if (phantom()) list.appendChild(item({ icon: PHANTOM_ICON, name: "Phantom", tag: "Default", strong: true, onClick: function(){ connectWith("phantom").catch(function(){}); } }));
+    else list.appendChild(item({ icon: PHANTOM_ICON, name: "Phantom", tag: "Install", strong: true, href: "https://phantom.com/download" }));
+    var others = discovered.filter(function(d){ return d.info.rdns !== "app.phantom"; });
+    others.forEach(function(d){
+      list.appendChild(item({ icon: d.info.icon || GENERIC_ICON, name: d.info.name, tag: current === d.info.rdns ? "Last used" : "Detected", onClick: function(){ connectWith(d.info.rdns).catch(function(){}); } }));
+    });
+    if (!others.length && window.ethereum && !window.ethereum.isPhantom)
+      list.appendChild(item({ icon: GENERIC_ICON, name: "Browser wallet", tag: "Detected", onClick: function(){ connectWith("injected").catch(function(){}); } }));
+    if (!others.some(function(d){ return d.info.rdns === "io.metamask"; }) && !(window.ethereum && window.ethereum.isMetaMask && !window.ethereum.isPhantom))
+      list.appendChild(item({ icon: GENERIC_ICON, name: "MetaMask", tag: "Install", href: "https://metamask.io/download/" }));
+  }
+  function openPicker(){ renderPicker(); pick.hidden = false; var f = pick.querySelector(".pick-item"); if (f) f.focus(); }
+  function closePicker(){ pick.hidden = true; }
+  function connect(){ openPicker(); return Promise.reject(new Error("picker")); }
+
+  $("connect").addEventListener("click", openPicker);
+
+  // silent reconnect to the last wallet used
+  setTimeout(function(){
+    var id = recall(); if (!id) return;
+    var pv = providerFor(id); if (!pv) return;
+    chosen = pv; hook(pv);
+    pv.request({ method:"eth_accounts" }).then(function(a){ if (a[0]) setAccount(a[0]); else chosen = null; }).catch(function(){ chosen = null; });
+    pv.request({ method:"eth_chainId" }).then(function(c){ chainId = parseInt(c,16); refreshBridge(); }).catch(function(){});
+  }, 300);
+
+  function chainParams(n){
+    var p = { chainId: hex(n.chainId), chainName: n.name, nativeCurrency:{ name:n.symbol, symbol:n.symbol, decimals:n.decimals }, rpcUrls:[n.rpc] };
+    if (n.explorer) p.blockExplorerUrls = [n.explorer];
+    return p;
+  }
+  function switchTo(n){
+    return wallet().request({ method:"wallet_switchEthereumChain", params:[{ chainId: hex(n.chainId) }] })
+      .catch(function(e){
+        if (e && (e.code === 4902 || (e.data && e.data.originalError && e.data.originalError.code === 4902))) {
+          if (!n.rpc) { UI.toast("Add " + n.name + " to your wallet first"); throw e; }
+          return wallet().request({ method:"wallet_addEthereumChain", params:[chainParams(n)] });
+        }
+        throw e;
+      });
+  }
+  document.querySelectorAll("[data-add-network]").forEach(function(b){
+    b.addEventListener("click", function(){
+      if (!needWallet()) return;
+      if (!CONFIG.nodia.chainId) { UI.toast("The NODIA Chain ID will be published at launch"); return; }
+      wallet().request({ method:"wallet_addEthereumChain", params:[chainParams(CONFIG.nodia)] })
+        .then(function(){ UI.toast("NODIA Chain added to wallet"); })
+        .catch(function(e){ UI.toast(e && e.code === 4001 ? "Request rejected in wallet" : "The wallet could not add the network"); });
+    });
+  });
+
+  // ---------- bridge ----------
+  var amt = $("amt-from"), out = $("amt-to"), btn = $("bridge-btn"), hint = $("bridge-hint");
+  var configured = !!E && isAddr(CONFIG.token) && isAddr(CONFIG.inbox);
+  function amountWei(){
+    try { var v = (amt.value || "").replace(",", ".").trim(); if (!v || Number(v) <= 0) return null; return E.parseUnits(v, 18); }
+    catch(e){ return null; }
+  }
+  amt.addEventListener("input", function(){ doneMsg = null; out.value = amt.value; refreshBridge(); });
+  var balance = null;
+  function loadBalance(){
+    if (!account || !configured || chainId !== CONFIG.parent.chainId) { $("bal").textContent = "Balance: —"; balance = null; return; }
+    var c = new E.Contract(CONFIG.token, ERC20, new E.BrowserProvider(wallet()));
+    c.balanceOf(account).then(function(b){ balance = b; $("bal").textContent = "Balance: " + Number(E.formatUnits(b,18)).toLocaleString("en-US",{maximumFractionDigits:4}); refreshBtn(); })
+      .catch(function(){ $("bal").textContent = "Balance: —"; });
+  }
+  function setBtn(label, enabled, h){ btn.textContent = label; btn.disabled = !enabled; if (h != null) hint.innerHTML = h; }
+  function refreshBtn(){
+    if (busy) return;
+    if (!configured) return setBtn("Bridge opens at launch", false, "The bridge contract will be published when $NODIA launches.");
+    if (!account) return setBtn("Connect wallet", true, "Connect your wallet to bridge.");
+    if (chainId !== CONFIG.parent.chainId) return setBtn("Switch to " + CONFIG.parent.name, true, "Your wallet must be on " + CONFIG.parent.name + ".");
+    var w = amountWei();
+    if (!w) return setBtn("Enter an amount", false, doneMsg || "Amount of $NODIA to send to NODIA Chain.");
+    if (balance != null && w > balance) return setBtn("Insufficient balance", false, "");
+    setBtn("Bridge " + amt.value + " NODIA", true, "Two signatures: token approval, then deposit.");
+  }
+  function refreshBridge(){ loadBalance(); refreshBtn(); }
+  btn.addEventListener("click", function(){
+    if (!configured) return;
+    if (!account) { connect().catch(function(){}); return; }
+    if (chainId !== CONFIG.parent.chainId) { switchTo(CONFIG.parent).catch(function(){}); return; }
+    var w = amountWei(); if (!w) return;
+    busy = true;
+    var provider = new E.BrowserProvider(wallet()), signer;
+    provider.getSigner().then(function(s){
+      signer = s;
+      var tok = new E.Contract(CONFIG.token, ERC20, signer);
+      return tok.allowance(account, CONFIG.inbox).then(function(a){
+        if (a >= w) return null;
+        setBtn("Approve in wallet…", false, "Confirm the approval for the exact amount.");
+        return tok.approve(CONFIG.inbox, w).then(function(tx){ setBtn("Approving…", false); return tx.wait(); });
+      });
+    }).then(function(){
+      setBtn("Confirm deposit in wallet…", false, "Confirm the deposit.");
+      return new E.Contract(CONFIG.inbox, INBOX, signer).depositERC20(w);
+    }).then(function(tx){
+      setBtn("Depositing…", false, "Transaction sent.");
+      return tx.wait().then(function(){ return tx; });
+    }).then(function(tx){
+      busy = false; amt.value = ""; out.value = "";
+      var link = CONFIG.parent.explorer ? ' <a href="' + CONFIG.parent.explorer.replace(/\/$/,"") + "/tx/" + tx.hash + '" target="_blank" rel="noopener">View transaction</a>' : "";
+      UI.toast("Deposit sent");
+      doneMsg = "Deposit confirmed. Your NODIA arrives on NODIA Chain in ~2 min." + link;
+      refreshBridge();
+    }).catch(function(e){
+      busy = false;
+      UI.toast(e && (e.code === 4001 || e.code === "ACTION_REJECTED") ? "Transaction rejected in wallet" : "The transaction failed");
+      refreshBtn();
+    });
+  });
+  refreshBtn();
+
+  // ---------- explorer ----------
+  function row(k, v){ var d=document.createElement("div"); var a=document.createElement("dt"); a.textContent=k; var b=document.createElement("dd"); b.textContent=v; d.appendChild(a); d.appendChild(b); return d; }
+  function show(title, rows){
+    var o = $("search-out"); o.innerHTML = ""; o.className = "card res";
+    var s = document.createElement("strong"); s.textContent = title; s.style.display="block"; s.style.marginBottom="12px"; o.appendChild(s);
+    if (rows){ var dl=document.createElement("dl"); dl.className="kv"; dl.style.margin="0"; rows.forEach(function(r){ dl.appendChild(row(r[0], r[1])); }); o.appendChild(dl); }
+  }
+  function msg(title, text){ var o=$("search-out"); o.className="card empty"; o.innerHTML=""; var s=document.createElement("strong"); s.textContent=title; o.appendChild(s); o.appendChild(document.createTextNode(text)); }
+  var fmt = function(h){ return parseInt(h,16).toLocaleString("en-US"); };
+  $("search-form").addEventListener("submit", function(e){
+    e.preventDefault();
+    var q = $("search").value.trim();
+    if (!q) return msg("Enter a search", "Block number, transaction hash or address.");
+    msg("Searching…", "");
+    var p;
+    if (/^\d+$/.test(q)) p = rpc("eth_getBlockByNumber", [hex(q), false]).then(function(b){
+      if (!b) return msg("Block not found", "This block does not exist yet.");
+      show("Block " + fmt(b.number), [["Hash", b.hash],["Date", new Date(parseInt(b.timestamp,16)*1000).toLocaleString("en-US")],["Transactions", String(b.transactions.length)],["Gas used", fmt(b.gasUsed)]]);
+    });
+    else if (/^0x[0-9a-fA-F]{64}$/.test(q)) p = Promise.all([rpc("eth_getTransactionByHash",[q]), rpc("eth_getTransactionReceipt",[q])]).then(function(r){
+      var t=r[0], rc=r[1];
+      if (!t) return msg("Transaction not found", "Check the hash.");
+      show("Transaction", [["Hash", t.hash],["Status", rc ? (rc.status === "0x1" ? "Success" : "Failed") : "Pending"],["Block", t.blockNumber ? fmt(t.blockNumber) : "—"],["From", t.from],["To", t.to || "Contract creation"],["Value", E.formatEther(t.value) + " NODIA"]]);
+    });
+    else if (isAddr(q)) p = Promise.all([rpc("eth_getBalance",[q,"latest"]), rpc("eth_getTransactionCount",[q,"latest"]), rpc("eth_getCode",[q,"latest"])]).then(function(r){
+      show("Address", [["Address", q],["Balance", E.formatEther(r[0]) + " NODIA"],["Transactions sent", fmt(r[1])],["Type", r[2] && r[2] !== "0x" ? "Contract" : "Account"]]);
+    });
+    else return msg("Unrecognized format", "Enter a block number, a 66-character hash or a 42-character address.");
+    p.catch(function(){ msg("RPC unreachable", "The NODIA network is not responding yet. The explorer will work once mainnet launches."); });
+  });
+})();
+</script>
